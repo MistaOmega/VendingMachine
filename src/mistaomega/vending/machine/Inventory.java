@@ -21,10 +21,11 @@ public class Inventory <T>{
     }
 
     public void remove(T item){
-        if(hasItem(item)){
-            int count = inventory.get(item);
-            inventory.put(item, count-1);
+        if (!hasItem(item)) {
+            return;
         }
+        int count = inventory.get(item);
+        inventory.put(item, count-1);
     }
 
     public boolean hasItem(T item){
@@ -35,5 +36,8 @@ public class Inventory <T>{
         inventory.clear();
     }
 
+    public void put(T item, int quantity) {
+        inventory.put(item, quantity);
+    }
 
 }

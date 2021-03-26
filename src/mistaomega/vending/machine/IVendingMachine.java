@@ -7,9 +7,9 @@ import mistaomega.vending.items.Item;
 import java.util.List;
 
 public interface IVendingMachine {
-    public long selectAndShow(Item item);
-    public Holder<Item, List<Currency>> collectItemAndChange();
-    public void insertCurrency(Currency currency);
-    public List<Currency> refund();
-    public void reset();
+     long selectAndShow(Item item);
+     Holder<Item, List<Currency>> collectItemAndChange();
+     void insertCurrency(Currency currency);
+     List<Currency> refund();
+     void reset();
 }
