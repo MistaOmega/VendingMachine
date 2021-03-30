@@ -26,6 +26,7 @@ public class Main {
         setLookAndFeel();
         SwingUtilities.invokeLater(() -> {
             HomeUI gui = new HomeUI();
+            gui.initialize();
             JFrame frame = new JFrame();
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setContentPane(gui.getMainPanel());
