@@ -1,6 +1,7 @@
 package mistaomega.vending.util;
 
 import javax.swing.*;
+import java.util.Random;
 
 public class Utilities {
 
@@ -25,5 +26,48 @@ public class Utilities {
             list.setModel(listModel);
         }
         return (DefaultListModel<T>) list.getModel();
+    }
+
+    /**
+     * Used for validating card numbers using Luhns Algorithm
+     * Assigns the check digit required to pass Luhns Algorithm
+     * @param number input number
+     * @return digit required to pass Luhn's Algorithm
+     */
+    public static int checkLuhn(String number)
+    {
+        int sum = 0;
+        int remainder = (number.length() + 1) % 2;
+        for (int i = 0; i < number.length(); i++) {
+
+            int digit = Integer.parseInt(number.substring(i, (i + 1)));
+
+            if ((i % 2) == remainder) {
+                digit = digit * 2;
+                if (digit > 9) {
+                    digit = (digit / 10) + (digit % 10);
+                }
+            }
+            sum += digit;
+        }
+
+        int mod = sum % 10;
+
+        return ((mod == 0) ? 0 : 10 - mod);
+    }
+
+    public static String generateCardNumber(int length) {
+        Random random = new Random(System.currentTimeMillis());
+
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            int digit = random.nextInt(10);
+            buffer.append(digit);
+        }
+
+        int checkDigit = checkLuhn(buffer.toString());
+        buffer.append(checkDigit);
+
+        return buffer.toString();
     }
 }
