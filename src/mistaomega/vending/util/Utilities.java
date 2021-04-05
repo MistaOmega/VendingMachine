@@ -20,7 +20,7 @@ public class Utilities {
      * @param <T> list item type
      * @return list model of list's type
      */
-    public static<T> DefaultListModel<?> InitListModel(JList<T> list){
+    public static<T> DefaultListModel<T> InitListModel(JList<T> list){
         if (list.getModel().getSize() == 0) {
             DefaultListModel<T> listModel = new DefaultListModel<>();
             list.setModel(listModel);

@@ -26,12 +26,12 @@ public class VendingMachine implements IVendingMachine{
     }
 
     @Override
-    public long selectAndShow(Item item) {
+    public int selectAndShow(Item item) {
         if(itemInv.hasItem(item)){
             selectedItem = item;
             return selectedItem.getPrice();
         }
-        throw new SoldOutException(String.format("Sold out of %s, please select another item", selectedItem.toString()));
+        throw new SoldOutException(String.format("Sold out of %s, please select another item", item.toString())); // Caught by HomeUI
     }
 
     @Override

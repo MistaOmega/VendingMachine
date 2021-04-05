@@ -1,12 +1,13 @@
 package mistaomega.vending.UI;
 
 import mistaomega.vending.items.Item;
+import mistaomega.vending.machine.VendingMachine;
+import mistaomega.vending.util.SoldOutException;
 import mistaomega.vending.util.Utilities;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class HomeUI {
     private JLabel TitleLabel;
@@ -20,25 +21,30 @@ public class HomeUI {
     private JButton btn4;
     private JButton btn3;
     private JPanel mainPanel;
+    private JButton btn0;
     private JButton btnA;
     private JButton btnB;
-    private JButton btnC;
-    private JList<Item> lstItems;
+    private JList<String> lstItems;
     private JTextField tfCodeEntry;
     private JButton btnClear;
+    private JTextField tfLoyalty;
+    private JButton btnClearLoyal;
+    private JButton btnSubmit;
+    private JTextField tfInfo;
+    private final VendingMachine vendingMachine;
 
 
-    public HomeUI() {
-
+    public HomeUI(VendingMachine vendingMachine) {
+        this.vendingMachine = vendingMachine;
     }
 
     public void initialize(){
         // Initialize the list model with a DefaultListModel for Items
-        DefaultListModel<Item> listModel = (DefaultListModel<Item>) Utilities.InitListModel(lstItems);
+        DefaultListModel<String> listModel = Utilities.InitListModel(lstItems);
 
         // Add the items to the items list
         for (Item i : Item.values()){
-            listModel.addElement(i);
+            listModel.addElement(i + " " + i.getCode());
         }
         ButtonListener listener = new ButtonListener();
 
@@ -51,14 +57,27 @@ public class HomeUI {
         btn7.addActionListener(listener);
         btn8.addActionListener(listener);
         btn9.addActionListener(listener);
+        btn0.addActionListener(listener);
         btnA.addActionListener(listener);
         btnB.addActionListener(listener);
-        btnC.addActionListener(listener);
+        btnClearLoyal.addActionListener(e -> tfLoyalty.setText(""));
         btnClear.addActionListener(e -> {
             listener.setNumberString("");
             tfCodeEntry.setText("");
         });
-
+        btnSubmit.addActionListener(e -> {
+            for (Item i: Item.values()) {
+                if(i.getCode().equals(tfCodeEntry.getText())){
+                    try {
+                        int pepsiPrice = vendingMachine.selectAndShow(i);
+                        tfInfo.setText(i + " selected, price is: £" + Utilities.currencyPrinter(pepsiPrice));
+                    } catch (SoldOutException exception) {
+                        tfInfo.setText(exception.getMessage());
+                        //exception.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     public JPanel getMainPanel() {
@@ -97,14 +116,14 @@ public class HomeUI {
                 } else if (e.getSource() == btn9) {
                     numberString += "9";
                     tfCodeEntry.setText(numberString);
+                } else if (e.getSource() == btn0) {
+                    numberString += "0";
+                    tfCodeEntry.setText(numberString);
                 } else if (e.getSource() == btnA) {
                     numberString += "A";
                     tfCodeEntry.setText(numberString);
                 } else if (e.getSource() == btnB) {
                     numberString += "B";
-                    tfCodeEntry.setText(numberString);
-                } else if (e.getSource() == btnC) {
-                    numberString += "C";
                     tfCodeEntry.setText(numberString);
                 }
             }

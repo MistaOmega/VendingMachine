@@ -1,7 +1,7 @@
 package mistaomega.vending.items;
 
 public enum Item {
-    COKE("Coke", 100, "01B7"), PEPSI("Pepsi", 105, "01A1"), FANTA("fanta", 101, "01A2"), IRNBRU("irn-bru", 2105, "01B1");
+    COKE("Coke", 100, "01B7"), PEPSI("Pepsi", 105, "01A1"), FANTA("Fanta", 101, "01A2"), IRNBRU("Irn-Bru", 2105, "01B1");
 
     private final String name;
     private final int price;
@@ -17,12 +17,16 @@ public enum Item {
         return name;
     }
 
-    public long getPrice(){
+    public int getPrice(){
         return price;
     }
 
-    @Override
-    public String toString() {
-        return name + " CODE: " + code;
+    public String getCode() {
+        return code;
     }
+
+//    @Override
+//    public String toString() {
+//        return name + " CODE: " + code;
+//    }
 }

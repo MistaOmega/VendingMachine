@@ -1,10 +1,9 @@
 package mistaomega.vending;
 
 import mistaomega.vending.UI.HomeUI;
+import mistaomega.vending.machine.VendingMachine;
 
 import javax.swing.*;
-
-
 
 public class Main {
     public static void setLookAndFeel(){
@@ -25,7 +24,7 @@ public class Main {
     public static void main(String[] args) {
         setLookAndFeel();
         SwingUtilities.invokeLater(() -> {
-            HomeUI gui = new HomeUI();
+            HomeUI gui = new HomeUI(new VendingMachine());
             gui.initialize();
             JFrame frame = new JFrame();
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
