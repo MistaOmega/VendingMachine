@@ -51,6 +51,37 @@ public class HomeUI {
 
     public HomeUI(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;
+        btnPurchase.addActionListener(e -> handlePurchase());
+        btnInsertMoney.addActionListener(e -> {
+            vendingMachine.
+        });
+    }
+
+    public void handlePurchase() {
+        //first if there's any item left
+
+        if (vendingMachine.getItemInv().getItemCount(vendingMachine.getSelectedItem()) <= 0) {
+            throw new SoldOutException("No more of item: " + vendingMachine.getSelectedItem());
+        }
+        // Now let's buy with loyalty
+        if (!tfLoyalty.getText().isEmpty()) {
+            for (LoyaltyCard loyaltyCard : vendingMachine.getLoyaltyCards()) {
+                if (loyaltyCard.getCardNumber().equals(tfLoyalty.getText())) {
+                    System.out.println(vendingMachine.getSelectedItem().getPrice());
+                    double discountedPrice = vendingMachine.loyaltyDiscount((double) vendingMachine.getSelectedItem().getPrice() / 100, 0.85);
+                    System.out.println(discountedPrice);
+                    if (loyaltyCard.getBankAccount().getBalance() >= discountedPrice) {
+                        loyaltyCard.getBankAccount().removeBalance(discountedPrice);
+                        tfLoyaltyBalance.setText("Loyalty Card Balance: " + loyaltyCard.getBankAccount().getBalance());
+                        return;
+                    }
+                }
+
+            }
+        }
+        tfInfo.setText("Loyalty card not found, trying to use cash");
+        // Attempt to use cash balance
+
     }
 
     /**
@@ -151,8 +182,8 @@ public class HomeUI {
             tfLoyaltyBalance.setText("");
             if (tfLoyalty.getText().length() == 16) {
                 for (LoyaltyCard loyaltyCard : vendingMachine.getLoyaltyCards()) {
-                    if (tfLoyalty.getText().equals(loyaltyCard.cardNumber)) {
-                        tfLoyaltyBalance.setText("Loyalty Card Balance: " + loyaltyCard.bankAccount.balance);
+                    if (tfLoyalty.getText().equals(loyaltyCard.getCardNumber())) {
+                        tfLoyaltyBalance.setText("Loyalty Card Balance: " + loyaltyCard.getBankAccount().getBalance());
                         break;
                     }
                 }

@@ -58,7 +58,7 @@ public class Utilities {
     public static List<LoyaltyCard> generateLoyalty() {
         BankAccount bankAccount = new BankAccount("John Smith", "00000000", "00-00-00", 105.50);
         LoyaltyCard loyaltyCard = new LoyaltyCard("John Smith", bankAccount);
-        System.out.println(loyaltyCard.cardNumber);
+        System.out.println(loyaltyCard.getCardNumber());
         List<LoyaltyCard> loyaltyCardList = new ArrayList<>();
         loyaltyCardList.add(loyaltyCard);
         return loyaltyCardList;

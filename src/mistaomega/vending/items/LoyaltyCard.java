@@ -3,11 +3,11 @@ package mistaomega.vending.items;
 import mistaomega.vending.util.Utilities;
 
 public class LoyaltyCard {
-    public String cardNumber;
-    public String cardOwner;
-    public BankAccount bankAccount;
+    private final String cardNumber;
+    private final BankAccount bankAccount;
+    private String cardOwner;
 
-    public LoyaltyCard(String cardOwner, BankAccount bankAccount){
+    public LoyaltyCard(String cardOwner, BankAccount bankAccount) {
         this.cardOwner = cardOwner;
         this.bankAccount = bankAccount;
         this.cardNumber = Utilities.generateCardNumber(15);
@@ -28,4 +28,5 @@ public class LoyaltyCard {
     public void setCardOwner(String cardOwner) {
         this.cardOwner = cardOwner;
     }
+
 }
