@@ -7,27 +7,31 @@ import mistaomega.vending.util.SoldOutException;
 
 import java.util.List;
 
-public class VendingMachine implements IVendingMachine{
-    private Inventory<Currency> currencyInv = new Inventory<>();
-    private Inventory<Item> itemInv = new Inventory<>();
+public class VendingMachine implements IVendingMachine {
+    private final Inventory<Currency> currencyInv = new Inventory<>();
+    private final Inventory<Item> itemInv = new Inventory<>();
     private long salesMade;
     private Item selectedItem;
     private long balance;
 
-    public VendingMachine(){
+    public VendingMachine() {
         //Initialise with 5 of each currency type, and 5 of each item type
-        for(Currency c : Currency.values()){
+        for (Currency c : Currency.values()) {
             currencyInv.put(c, 5);
         }
 
-        for(Item i : Item.values()){
+        for (Item i : Item.values()) {
             itemInv.put(i, 5);
         }
     }
 
+    public Inventory<Item> getItemInv() {
+        return itemInv;
+    }
+
     @Override
     public int selectAndShow(Item item) {
-        if(itemInv.hasItem(item)){
+        if (itemInv.hasItem(item)) {
             selectedItem = item;
             return selectedItem.getPrice();
         }

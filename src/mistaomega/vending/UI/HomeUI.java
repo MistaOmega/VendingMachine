@@ -31,6 +31,11 @@ public class HomeUI {
     private JButton btnClearLoyal;
     private JButton btnSubmit;
     private JTextField tfInfo;
+    private JTextField tfLoyaltyBalance;
+    private JTextField tfInsertMoney;
+    private JTextField tfChange;
+    private JButton btnInsertMoney;
+    private JButton btnCollectChange;
     private final VendingMachine vendingMachine;
 
 
@@ -38,7 +43,7 @@ public class HomeUI {
         this.vendingMachine = vendingMachine;
     }
 
-    public void initialize(){
+    public void initialize() {
         // Initialize the list model with a DefaultListModel for Items
         DefaultListModel<String> listModel = Utilities.InitListModel(lstItems);
 
@@ -60,17 +65,25 @@ public class HomeUI {
         btn0.addActionListener(listener);
         btnA.addActionListener(listener);
         btnB.addActionListener(listener);
-        btnClearLoyal.addActionListener(e -> tfLoyalty.setText(""));
+        btnClearLoyal.addActionListener(e -> {
+            tfLoyalty.setText("");
+            tfLoyaltyBalance.setText("");
+        });
         btnClear.addActionListener(e -> {
             listener.setNumberString("");
             tfCodeEntry.setText("");
+            tfInfo.setText("");
         });
         btnSubmit.addActionListener(e -> {
-            for (Item i: Item.values()) {
-                if(i.getCode().equals(tfCodeEntry.getText())){
+            for (Item i : Item.values()) {
+                if (i.getCode().equals(tfCodeEntry.getText())) {
                     try {
-                        int pepsiPrice = vendingMachine.selectAndShow(i);
-                        tfInfo.setText(i + " selected, price is: £" + Utilities.currencyPrinter(pepsiPrice));
+                        int price = vendingMachine.selectAndShow(i);
+                        tfInfo.setText(i + " selected, price is: £" +
+                                Utilities.currencyPrinter(price) +
+                                " there are " +
+                                vendingMachine.getItemInv().getItemCount(i) +
+                                " left.");
                     } catch (SoldOutException exception) {
                         tfInfo.setText(exception.getMessage());
                         //exception.printStackTrace();
@@ -84,8 +97,12 @@ public class HomeUI {
         return mainPanel;
     }
 
+    /**
+     * Class for listening to button inputs
+     */
     class ButtonListener implements ActionListener {
         private String numberString = "";
+
         @Override
         public void actionPerformed(ActionEvent e) {
             if (numberString.length() < 4) {

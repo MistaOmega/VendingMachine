@@ -1,26 +1,30 @@
 package mistaomega.vending.util;
 
 import javax.swing.*;
+import java.text.DecimalFormat;
 import java.util.Random;
 
 public class Utilities {
 
     /**
      * Convert item cost in pence to item cost in pounds, return as string
+     *
      * @param value item cost in pence
      * @return string conversion of item cost in pounds
      */
-    public static String currencyPrinter(int value){
-        return String.valueOf((float)value/100);
+    public static String currencyPrinter(float value) {
+        DecimalFormat df = new DecimalFormat("#.00");
+        return df.format(value / 100);
     }
 
     /**
      * Generic ListModel initializer
+     *
      * @param list input list
-     * @param <T> list item type
+     * @param <T>  list item type
      * @return list model of list's type
      */
-    public static<T> DefaultListModel<T> InitListModel(JList<T> list){
+    public static <T> DefaultListModel<T> InitListModel(JList<T> list) {
         if (list.getModel().getSize() == 0) {
             DefaultListModel<T> listModel = new DefaultListModel<>();
             list.setModel(listModel);
@@ -31,11 +35,11 @@ public class Utilities {
     /**
      * Used for validating card numbers using Luhns Algorithm
      * Assigns the check digit required to pass Luhns Algorithm
+     *
      * @param number input number
      * @return digit required to pass Luhn's Algorithm
      */
-    public static int checkLuhn(String number)
-    {
+    public static int assignCheckDigit(String number) {
         int sum = 0;
         int remainder = (number.length() + 1) % 2;
         for (int i = 0; i < number.length(); i++) {
@@ -65,7 +69,7 @@ public class Utilities {
             buffer.append(digit);
         }
 
-        int checkDigit = checkLuhn(buffer.toString());
+        int checkDigit = assignCheckDigit(buffer.toString());
         buffer.append(checkDigit);
 
         return buffer.toString();
