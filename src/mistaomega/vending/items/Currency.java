@@ -6,22 +6,17 @@ package mistaomega.vending.items;
  * @author Jack Nash
  */
 public enum Currency {
-    PENNY (1),
+    PENNY(1),
     TWOPENCE(2),
     FIVEPENCE(5),
     TENPENCE(10),
     TWENTYPENCE(20),
     FIFTYPENCE(50),
     POUND(100),
-    TWOPOUND(200),
-    FIVEPOUND(500),
-    TENPOUND(1000),
-    TWENTYPOUND(2000),
-    FIFTYPOUND(5000);
-
+    TWOPOUND(200);
     private final int value;
 
-    private Currency(int value){
+    Currency(int value) {
         this.value = value;
     }
 

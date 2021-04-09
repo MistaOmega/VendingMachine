@@ -3,7 +3,9 @@ package mistaomega.vending.machine;
 import mistaomega.vending.items.Currency;
 import mistaomega.vending.items.Holder;
 import mistaomega.vending.items.Item;
+import mistaomega.vending.items.LoyaltyCard;
 import mistaomega.vending.util.SoldOutException;
+import mistaomega.vending.util.Utilities;
 
 import java.util.List;
 
@@ -13,6 +15,7 @@ public class VendingMachine implements IVendingMachine {
     private long salesMade;
     private Item selectedItem;
     private long balance;
+    private final List<LoyaltyCard> loyaltyCards;
 
     public VendingMachine() {
         //Initialise with 5 of each currency type, and 5 of each item type
@@ -23,11 +26,26 @@ public class VendingMachine implements IVendingMachine {
         for (Item i : Item.values()) {
             itemInv.put(i, 5);
         }
+        loyaltyCards = Utilities.generateLoyalty();
     }
 
     public Inventory<Item> getItemInv() {
         return itemInv;
     }
+
+    public List<LoyaltyCard> getLoyaltyCards() {
+        return loyaltyCards;
+    }
+
+    //todo
+    public boolean checkChange(double paymentAmount) {
+        for (Currency currency : Currency.values()) {
+
+        }
+
+        return false;
+    }
+
 
     @Override
     public int selectAndShow(Item item) {
@@ -57,5 +75,11 @@ public class VendingMachine implements IVendingMachine {
     @Override
     public void reset() {
 
+    }
+
+    public void printStats() {
+        System.out.println("Total Sales : " + salesMade);
+        System.out.println("Current Item Inventory : " + itemInv);
+        System.out.println("Current Cash Inventory : " + currencyInv);
     }
 }

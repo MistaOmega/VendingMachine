@@ -1,13 +1,22 @@
 package mistaomega.vending.UI;
 
 import mistaomega.vending.items.Item;
+import mistaomega.vending.items.LoyaltyCard;
 import mistaomega.vending.machine.VendingMachine;
 import mistaomega.vending.util.SoldOutException;
 import mistaomega.vending.util.Utilities;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.util.Objects;
 
 public class HomeUI {
     private JLabel TitleLabel;
@@ -36,6 +45,7 @@ public class HomeUI {
     private JTextField tfChange;
     private JButton btnInsertMoney;
     private JButton btnCollectChange;
+    private JButton btnPurchase;
     private final VendingMachine vendingMachine;
 
 
@@ -43,12 +53,72 @@ public class HomeUI {
         this.vendingMachine = vendingMachine;
     }
 
+    /**
+     * This function is taken from StackOverflow, by user "Boann"
+     *
+     * @param text           any text component, such as a {@link JTextField}
+     *                       or {@link JTextArea}
+     * @param changeListener a listener to receive {@link ChangeEvent}s
+     *                       when the text is changed; the source object for the events
+     *                       will be the text component
+     * @throws NullPointerException if either parameter is null
+     * @see <a href="https://stackoverflow.com/a/27190162">Change Listener Code</a>
+     * @see <a href="https://stackoverflow.com/users/964243/boann">Boann's Profile</a>
+     * <p>
+     * Installs a listener to receive notification when the text of any
+     * {@code JTextComponent} is changed. Internally, it installs a
+     * {@link DocumentListener} on the text component's {@link Document},
+     * and a {@link ChangeListener} on the text component to detect
+     * if the {@code Document} itself is replaced.
+     */
+    public static void addChangeListener(JTextComponent text, ChangeListener changeListener) {
+        Objects.requireNonNull(text);
+        Objects.requireNonNull(changeListener);
+        DocumentListener dl = new DocumentListener() {
+            private int lastChange = 0, lastNotifiedChange = 0;
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changedUpdate(e);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                lastChange++;
+                SwingUtilities.invokeLater(() -> {
+                    if (lastNotifiedChange != lastChange) {
+                        lastNotifiedChange = lastChange;
+                        changeListener.stateChanged(new ChangeEvent(text));
+                    }
+                });
+            }
+        };
+        text.addPropertyChangeListener("document", (PropertyChangeEvent e) -> {
+            Document d1 = (Document) e.getOldValue();
+            Document d2 = (Document) e.getNewValue();
+            if (d1 != null) d1.removeDocumentListener(dl);
+            if (d2 != null) d2.addDocumentListener(dl);
+            dl.changedUpdate(null);
+        });
+        Document d = text.getDocument();
+        if (d != null) d.addDocumentListener(dl);
+    }
+
+    public JPanel getMainPanel() {
+        return mainPanel;
+    }
+
     public void initialize() {
         // Initialize the list model with a DefaultListModel for Items
         DefaultListModel<String> listModel = Utilities.InitListModel(lstItems);
 
         // Add the items to the items list
-        for (Item i : Item.values()){
+        for (Item i : Item.values()) {
             listModel.addElement(i + " " + i.getCode());
         }
         ButtonListener listener = new ButtonListener();
@@ -74,6 +144,20 @@ public class HomeUI {
             tfCodeEntry.setText("");
             tfInfo.setText("");
         });
+        addChangeListener(tfLoyalty, e -> {
+
+            btnInsertMoney.setEnabled(tfLoyalty.getText().isEmpty());
+
+            tfLoyaltyBalance.setText("");
+            if (tfLoyalty.getText().length() == 16) {
+                for (LoyaltyCard loyaltyCard : vendingMachine.getLoyaltyCards()) {
+                    if (tfLoyalty.getText().equals(loyaltyCard.cardNumber)) {
+                        tfLoyaltyBalance.setText("Loyalty Card Balance: " + loyaltyCard.bankAccount.balance);
+                        break;
+                    }
+                }
+            }
+        });
         btnSubmit.addActionListener(e -> {
             for (Item i : Item.values()) {
                 if (i.getCode().equals(tfCodeEntry.getText())) {
@@ -93,9 +177,6 @@ public class HomeUI {
         });
     }
 
-    public JPanel getMainPanel() {
-        return mainPanel;
-    }
 
     /**
      * Class for listening to button inputs

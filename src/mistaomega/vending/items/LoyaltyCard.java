@@ -10,7 +10,7 @@ public class LoyaltyCard {
     public LoyaltyCard(String cardOwner, BankAccount bankAccount){
         this.cardOwner = cardOwner;
         this.bankAccount = bankAccount;
-        this.cardNumber = Utilities.generateCardNumber(16);
+        this.cardNumber = Utilities.generateCardNumber(15);
     }
 
     public BankAccount getBankAccount() {
