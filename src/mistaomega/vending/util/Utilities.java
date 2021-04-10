@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Common utilities class
+ *
+ * @author Jack Nash
+ */
 public class Utilities {
 
     /**

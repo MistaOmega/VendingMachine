@@ -7,6 +7,7 @@ import java.util.Map;
  * This class holds items like an inventory
  *
  * @param <T> Inventory type
+ * @author Jack Nash
  */
 public class Inventory<T> {
     private final Map<T, Integer> inventory = new HashMap<>();

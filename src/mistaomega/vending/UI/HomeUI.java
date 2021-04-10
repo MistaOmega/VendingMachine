@@ -18,6 +18,11 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 
+/**
+ * UI controller class
+ *
+ * @author Jack Nash
+ */
 public class HomeUI {
     private JLabel TitleLabel;
     private JButton btn2;
@@ -48,10 +53,15 @@ public class HomeUI {
     private JButton btnPurchase;
     private final VendingMachine vendingMachine;
 
-
+    /**
+     * Constructor
+     *
+     * @param vendingMachine vending machine the UI communicates with
+     */
     public HomeUI(VendingMachine vendingMachine) {
         this.vendingMachine = vendingMachine;
 
+        // handle money input
         btnInsertMoney.addActionListener(e -> {
             try {
                 vendingMachine.insertMoney(Integer.parseInt(tfInsertMoney.getText()));
@@ -62,49 +72,11 @@ public class HomeUI {
                 tfInfo.setText("Numbers only when inserting money, dumb dumb");
             }
         });
+        // change collection
         btnCollectChange.addActionListener(e -> {
             tfInfo.setText(vendingMachine.refund() + " returned to you ");
             tfLoyalty.setEnabled(true);
         });
-    }
-
-    public void handlePurchase(ButtonListener listener) {
-        //first if there's any item left
-
-        if (vendingMachine.getItemInv().getItemCount(vendingMachine.getSelectedItem()) <= 0) {
-            throw new SoldOutException("No more of item: " + vendingMachine.getSelectedItem());
-        }
-        // Now let's buy with loyalty
-        if (!tfLoyalty.getText().isEmpty()) {
-            for (LoyaltyCard loyaltyCard : vendingMachine.getLoyaltyCards()) {
-                Item item = vendingMachine.getSelectedItem();
-                double itemPrice = item.getPrice();
-                if (loyaltyCard.getCardNumber().equals(tfLoyalty.getText())) {
-                    double discountedPrice = vendingMachine.loyaltyDiscount(itemPrice / 100, 0.85);
-                    System.out.println(discountedPrice);
-                    if (loyaltyCard.getBankAccount().getBalance() >= discountedPrice) {
-                        loyaltyCard.getBankAccount().removeBalance(discountedPrice);
-                        tfLoyaltyBalance.setText("Loyalty Card Balance: " + loyaltyCard.getBankAccount().getBalance());
-                        vendingMachine.getItemInv().remove(item);
-                    }
-                }
-
-            }
-        } else {
-            tfInfo.setText("Loyalty card not found, trying to use cash");
-            // Attempt to use cash balance
-            if (vendingMachine.getBalance() <= vendingMachine.getSelectedItem().getPrice() / 100) {
-                tfInfo.setText("Insufficient balance, insert money to purchase");
-            }
-
-            boolean purchased = vendingMachine.purchaseItem(vendingMachine.getSelectedItem(), (double) vendingMachine.getSelectedItem().getPrice() / 100);
-            if (purchased) {
-                tfInfo.setText("Purchase completed successfully, enjoy!");
-            }
-        }
-        tfCodeEntry.setText("");
-        listener.setNumberString("");
-        vendingMachine.reset();
     }
 
     /**
@@ -163,10 +135,58 @@ public class HomeUI {
         if (d != null) d.addDocumentListener(dl);
     }
 
+
     public JPanel getMainPanel() {
         return mainPanel;
     }
 
+    /**
+     * Handle the purchase of an item
+     *
+     * @param listener ButtonListener so I can clear the item code later
+     */
+    public void handlePurchase(ButtonListener listener) {
+        //first if there's any item left
+
+        if (vendingMachine.getItemInv().getItemCount(vendingMachine.getSelectedItem()) <= 0) { // this shouldn't ever be reached.
+            throw new SoldOutException("No more of item: " + vendingMachine.getSelectedItem());
+        }
+        // Now let's buy with loyalty
+        if (!tfLoyalty.getText().isEmpty()) {
+            for (LoyaltyCard loyaltyCard : vendingMachine.getLoyaltyCards()) {
+                Item item = vendingMachine.getSelectedItem();
+                double itemPrice = item.getPrice();
+                if (loyaltyCard.getCardNumber().equals(tfLoyalty.getText())) {
+                    double discountedPrice = vendingMachine.loyaltyDiscount(itemPrice / 100, 0.85);
+                    System.out.println(discountedPrice);
+                    if (loyaltyCard.getBankAccount().getBalance() >= discountedPrice) {
+                        loyaltyCard.getBankAccount().removeBalance(discountedPrice);
+                        tfLoyaltyBalance.setText("Loyalty Card Balance: " + loyaltyCard.getBankAccount().getBalance());
+                        vendingMachine.getItemInv().remove(item);
+                    }
+                }
+
+            }
+        } else {
+            tfInfo.setText("Loyalty card not found, trying to use cash");
+            // Attempt to use cash balance
+            if (vendingMachine.getBalance() <= vendingMachine.getSelectedItem().getPrice() / 100) {
+                tfInfo.setText("Insufficient balance, insert money to purchase");
+            }
+
+            boolean purchased = vendingMachine.purchaseItem(vendingMachine.getSelectedItem(), (double) vendingMachine.getSelectedItem().getPrice() / 100);
+            if (purchased) {
+                tfInfo.setText("Purchase completed successfully, enjoy!");
+            }
+        }
+        tfCodeEntry.setText("");
+        listener.setNumberString("");
+        vendingMachine.reset();
+    }
+
+    /**
+     * Init class
+     */
     public void initialize() {
         // Initialize the list model with a DefaultListModel for Items
         DefaultListModel<String> listModel = Utilities.InitListModel(lstItems);
@@ -175,7 +195,7 @@ public class HomeUI {
         for (Item i : Item.values()) {
             listModel.addElement(i + " " + i.getCode());
         }
-        ButtonListener listener = new ButtonListener();
+        ButtonListener listener = new ButtonListener(); // keypad listener
 
         btn1.addActionListener(listener);
         btn2.addActionListener(listener);
@@ -189,21 +209,25 @@ public class HomeUI {
         btn0.addActionListener(listener);
         btnA.addActionListener(listener);
         btnB.addActionListener(listener);
+
+        //clear loyalty info button
         btnClearLoyal.addActionListener(e -> {
             tfLoyalty.setText("");
             tfLoyaltyBalance.setText("");
         });
+        // clear drink button listener
         btnClear.addActionListener(e -> {
             listener.setNumberString("");
             tfCodeEntry.setText("");
             tfInfo.setText("");
         });
-        addChangeListener(tfLoyalty, e -> {
-            btnInsertMoney.setEnabled(tfLoyalty.getText().isEmpty());
 
-            tfLoyaltyBalance.setText("");
+        // textfield text changed listener for loyalty card entry
+        addChangeListener(tfLoyalty, e -> {
+            btnInsertMoney.setEnabled(tfLoyalty.getText().isEmpty()); // turn off cash if trying to use loyalty
+            tfLoyaltyBalance.setText(""); // balance empty
             if (tfLoyalty.getText().length() == 16) {
-                for (LoyaltyCard loyaltyCard : vendingMachine.getLoyaltyCards()) {
+                for (LoyaltyCard loyaltyCard : vendingMachine.getLoyaltyCards()) { // get loyalty card and balance and display
                     if (tfLoyalty.getText().equals(loyaltyCard.getCardNumber())) {
                         tfLoyaltyBalance.setText("Loyalty Card Balance: " + loyaltyCard.getBankAccount().getBalance());
                         break;
@@ -212,18 +236,19 @@ public class HomeUI {
             }
         });
 
+        // button handle for submit button
         btnSubmit.addActionListener(e -> {
-            for (Item i : Item.values()) {
-                if (i.getCode().equals(tfCodeEntry.getText())) {
+            for (Item i : Item.values()) { // get all items
+                if (i.getCode().equals(tfCodeEntry.getText())) { // check if item code is the same as the item
                     try {
-                        int price = vendingMachine.selectAndShow(i);
-                        tfInfo.setText(i + " selected, price is: £" +
+                        int price = vendingMachine.selectAndShow(i); // select item
+                        tfInfo.setText(i + " selected, price is: £" + // display info
                                 Utilities.currencyPrinter(price) +
                                 " there are " +
                                 vendingMachine.getItemInv().getItemCount(i) +
                                 " left.");
                     } catch (SoldOutException exception) {
-                        tfInfo.setText(exception.getMessage());
+                        tfInfo.setText(exception.getMessage()); // display if sold out
                         //exception.printStackTrace();
                     }
                 }
@@ -233,13 +258,18 @@ public class HomeUI {
 
     }
 
-
     /**
      * Class for listening to button inputs
      */
     class ButtonListener implements ActionListener {
         private String numberString = "";
 
+        /**
+         * Action for handling keypad input
+         * maximum of a 4 digit code
+         *
+         * @param e button press
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             if (numberString.length() < 4) {
@@ -283,6 +313,11 @@ public class HomeUI {
             }
         }
 
+        /**
+         * for resetting or hardcoding changes to the number string that limits code size input
+         *
+         * @param numberString input string
+         */
         public void setNumberString(String numberString) {
             this.numberString = numberString;
         }

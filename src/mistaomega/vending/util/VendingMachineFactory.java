@@ -4,9 +4,10 @@ import mistaomega.vending.machine.IVendingMachine;
 import mistaomega.vending.machine.VendingMachine;
 
 /**
- * Unsure if needed for proj, would theoretically allow the construction of different vending machine "types"
- * //Unimplemented
+ * Unsure if needed for project, would theoretically allow the construction of different vending machine "types"
+ * Unused
  *
+ * @author Jack Nash
  */
 public class VendingMachineFactory {
     public static IVendingMachine createVendingMachine() {

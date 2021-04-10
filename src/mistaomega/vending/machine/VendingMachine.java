@@ -7,12 +7,20 @@ import mistaomega.vending.util.Utilities;
 
 import java.util.List;
 
+/**
+ * Vending machine implementation class, this handles item storage and balance management
+ *
+ * @author Jack Nash
+ */
 public class VendingMachine implements IVendingMachine {
     private final Inventory<Item> itemInv = new Inventory<>();
     private final List<LoyaltyCard> loyaltyCards;
     private Item selectedItem;
     private int balance;
 
+    /**
+     * Constructor
+     */
     public VendingMachine() {
         //Initialise with 5 of each item type
 
@@ -42,6 +50,12 @@ public class VendingMachine implements IVendingMachine {
     }
 
 
+    /**
+     * Check item stock and return to user
+     *
+     * @param item Item to check
+     * @return Item price, or exception if sold out
+     */
     @Override
     public int selectAndShow(Item item) {
         if (itemInv.hasItem(item)) {
@@ -51,20 +65,31 @@ public class VendingMachine implements IVendingMachine {
         throw new SoldOutException(String.format("Sold out of %s, please select another item", item.toString())); // Caught by HomeUI
     }
 
+    /**
+     * add money to balance
+     *
+     * @param money how much to add
+     */
     @Override
     public void insertMoney(int money) {
         balance += money;
     }
 
+    /**
+     * Refund balance to user
+     *
+     * @return balance
+     */
     @Override
     public int refund() {
         int returnAmount = balance;
-        System.out.println(returnAmount);
         balance = 0;
-        System.out.println(returnAmount);
         return returnAmount;
     }
 
+    /**
+     * Reset selected item
+     */
     @Override
     public void reset() {
         selectedItem = null;
@@ -74,6 +99,13 @@ public class VendingMachine implements IVendingMachine {
         return balance;
     }
 
+    /**
+     * Purchase item, called by HomeUI
+     *
+     * @param item  Item to purchase
+     * @param price Price of item
+     * @return Boolean if purchased with no error
+     */
     public boolean purchaseItem(Item item, double price) {
         try {
             this.getItemInv().remove(item);
