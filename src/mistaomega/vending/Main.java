@@ -8,7 +8,6 @@ import javax.swing.*;
 public class Main {
     public static void setLookAndFeel(){
         try {
-            // Set cross-platform Java L&F (also called "Metal")
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
