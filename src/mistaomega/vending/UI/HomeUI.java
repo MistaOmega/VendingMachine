@@ -178,7 +178,7 @@ public class HomeUI {
         } else {
             tfInfo.setText("Loyalty card not found, trying to use cash");
             // Attempt to use cash balance
-            if (vendingMachine.getBalance() <= vendingMachine.getSelectedItem().getPrice() / 100) {
+            if (vendingMachine.getBalance() < vendingMachine.getSelectedItem().getPrice() / 100) {
                 tfInfo.setText("Insufficient balance, insert money to purchase");
             }
             else {
