@@ -45,12 +45,14 @@ public class HomeUI {
     private JButton btnClearLoyal;
     private JButton btnSubmit;
     private JTextField tfInfo;
-    private JTextField tfLoyaltyBalance;
+    private JTextField tfBalance;
     private JTextField tfInsertMoney;
     private JTextField tfChange;
     private JButton btnInsertMoney;
     private JButton btnCollectChange;
     private JButton btnPurchase;
+    private JLabel lblOut;
+    private JLabel lblBal;
     private final VendingMachine vendingMachine;
 
     /**
@@ -64,9 +66,10 @@ public class HomeUI {
         // handle money input
         btnInsertMoney.addActionListener(e -> {
             try {
-                vendingMachine.insertMoney(Integer.parseInt(tfInsertMoney.getText()));
+                vendingMachine.insertMoney(Float.parseFloat(tfInsertMoney.getText()));
                 if (vendingMachine.getBalance() > 0) {
                     tfLoyalty.setEnabled(false);
+                    tfBalance.setText("£" + Utilities.currencyPrinter(vendingMachine.getBalance()));
                 }
             } catch (NumberFormatException numberFormatException) {
                 tfInfo.setText("Numbers only when inserting money, dumb dumb");
@@ -74,7 +77,7 @@ public class HomeUI {
         });
         // change collection
         btnCollectChange.addActionListener(e -> {
-            tfInfo.setText(vendingMachine.refund() + " returned to you ");
+            tfInfo.setText(Utilities.currencyPrinter(vendingMachine.refund()) + " returned to you ");
             tfLoyalty.setEnabled(true);
         });
     }
@@ -155,14 +158,19 @@ public class HomeUI {
         if (!tfLoyalty.getText().isEmpty()) {
             for (LoyaltyCard loyaltyCard : vendingMachine.getLoyaltyCards()) {
                 Item item = vendingMachine.getSelectedItem();
-                double itemPrice = item.getPrice();
+                float itemPrice = item.getPrice();
                 if (loyaltyCard.getCardNumber().equals(tfLoyalty.getText())) {
-                    double discountedPrice = vendingMachine.loyaltyDiscount(itemPrice / 100, 0.85);
+                    float discountedPrice = vendingMachine.loyaltyDiscount(itemPrice / 100, 0.85f);
                     System.out.println(discountedPrice);
                     if (loyaltyCard.getBankAccount().getBalance() >= discountedPrice) {
                         loyaltyCard.getBankAccount().removeBalance(discountedPrice);
-                        tfLoyaltyBalance.setText("Loyalty Card Balance: " + loyaltyCard.getBankAccount().getBalance());
+                        tfBalance.setText("£" + Utilities.currencyPrinter(loyaltyCard.getBankAccount().getBalance()) + " 15% Discount Applied");
                         vendingMachine.getItemInv().remove(item);
+                        tfInfo.setText("Purchase completed successfully, enjoy!");
+                    }
+                    else{
+                        tfInfo.setText("Insufficient balance on loyalty card, insert money to purchase");
+                        return;
                     }
                 }
 
@@ -173,10 +181,11 @@ public class HomeUI {
             if (vendingMachine.getBalance() <= vendingMachine.getSelectedItem().getPrice() / 100) {
                 tfInfo.setText("Insufficient balance, insert money to purchase");
             }
-
-            boolean purchased = vendingMachine.purchaseItem(vendingMachine.getSelectedItem(), (double) vendingMachine.getSelectedItem().getPrice() / 100);
-            if (purchased) {
-                tfInfo.setText("Purchase completed successfully, enjoy!");
+            else {
+                boolean purchased = vendingMachine.purchaseItem(vendingMachine.getSelectedItem(), vendingMachine.getSelectedItem().getPrice() / 100);
+                if (purchased) {
+                    tfInfo.setText("Purchase completed successfully, enjoy!");
+                }
             }
         }
         tfCodeEntry.setText("");
@@ -213,7 +222,7 @@ public class HomeUI {
         //clear loyalty info button
         btnClearLoyal.addActionListener(e -> {
             tfLoyalty.setText("");
-            tfLoyaltyBalance.setText("");
+            tfBalance.setText("");
         });
         // clear drink button listener
         btnClear.addActionListener(e -> {
@@ -225,11 +234,11 @@ public class HomeUI {
         // textfield text changed listener for loyalty card entry
         addChangeListener(tfLoyalty, e -> {
             btnInsertMoney.setEnabled(tfLoyalty.getText().isEmpty()); // turn off cash if trying to use loyalty
-            tfLoyaltyBalance.setText(""); // balance empty
+            tfBalance.setText(""); // balance empty
             if (tfLoyalty.getText().length() == 16) {
                 for (LoyaltyCard loyaltyCard : vendingMachine.getLoyaltyCards()) { // get loyalty card and balance and display
                     if (tfLoyalty.getText().equals(loyaltyCard.getCardNumber())) {
-                        tfLoyaltyBalance.setText("Loyalty Card Balance: " + loyaltyCard.getBankAccount().getBalance());
+                        tfBalance.setText("£" + Utilities.currencyPrinter(loyaltyCard.getBankAccount().getBalance()) + " 15% Discount Applied");
                         break;
                     }
                 }
@@ -241,9 +250,9 @@ public class HomeUI {
             for (Item i : Item.values()) { // get all items
                 if (i.getCode().equals(tfCodeEntry.getText())) { // check if item code is the same as the item
                     try {
-                        int price = vendingMachine.selectAndShow(i); // select item
+                        float price = vendingMachine.selectAndShow(i); // select item
                         tfInfo.setText(i + " selected, price is: £" + // display info
-                                Utilities.currencyPrinter(price) +
+                                Utilities.currencyPrinter(price/100) +
                                 " there are " +
                                 vendingMachine.getItemInv().getItemCount(i) +
                                 " left.");

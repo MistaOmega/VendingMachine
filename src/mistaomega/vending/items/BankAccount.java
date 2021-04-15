@@ -4,24 +4,24 @@ public class BankAccount {
     private final String accountHolder;
     private final String accountNumber;
     private final String sortCode;
-    private double balance;
+    private float balance;
 
-    public BankAccount(String accountHolder, String accountNumber, String sortCode, double balance) {
+    public BankAccount(String accountHolder, String accountNumber, String sortCode, float balance) {
         this.accountHolder = accountHolder;
         this.accountNumber = accountNumber;
         this.sortCode = sortCode;
         this.balance = balance;
     }
 
-    public void removeBalance(double amount) {
+    public void removeBalance(float amount) {
         setBalance(balance - amount);
     }
 
-    public double getBalance() {
+    public float getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(float balance) {
         this.balance = balance;
     }
 

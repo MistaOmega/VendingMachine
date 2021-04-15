@@ -16,7 +16,7 @@ public class VendingMachine implements IVendingMachine {
     private final Inventory<Item> itemInv = new Inventory<>();
     private final List<LoyaltyCard> loyaltyCards;
     private Item selectedItem;
-    private int balance;
+    private float balance;
 
     /**
      * Constructor
@@ -45,7 +45,7 @@ public class VendingMachine implements IVendingMachine {
      * @param discountAmount discount amount in decimal, E.g 0.85 would return an item with a 15% discount
      * @return discounted price
      */
-    public double loyaltyDiscount(double originalPrice, double discountAmount) {
+    public float loyaltyDiscount(float originalPrice, float discountAmount) {
         return originalPrice * discountAmount;
     }
 
@@ -57,7 +57,7 @@ public class VendingMachine implements IVendingMachine {
      * @return Item price, or exception if sold out
      */
     @Override
-    public int selectAndShow(Item item) {
+    public float selectAndShow(Item item) {
         if (itemInv.hasItem(item)) {
             selectedItem = item;
             return selectedItem.getPrice();
@@ -71,7 +71,7 @@ public class VendingMachine implements IVendingMachine {
      * @param money how much to add
      */
     @Override
-    public void insertMoney(int money) {
+    public void insertMoney(float money) {
         balance += money;
     }
 
@@ -81,8 +81,8 @@ public class VendingMachine implements IVendingMachine {
      * @return balance
      */
     @Override
-    public int refund() {
-        int returnAmount = balance;
+    public float refund() {
+        float returnAmount = balance;
         balance = 0;
         return returnAmount;
     }
@@ -95,7 +95,7 @@ public class VendingMachine implements IVendingMachine {
         selectedItem = null;
     }
 
-    public long getBalance() {
+    public float getBalance() {
         return balance;
     }
 

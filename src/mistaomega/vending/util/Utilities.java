@@ -61,7 +61,7 @@ public class Utilities {
      * @return collection of loyalty cards
      */
     public static List<LoyaltyCard> generateLoyalty() {
-        BankAccount bankAccount = new BankAccount("John Smith", "00000000", "00-00-00", 105.50);
+        BankAccount bankAccount = new BankAccount("John Smith", "00000000", "00-00-00", 3.50f);
         LoyaltyCard loyaltyCard = new LoyaltyCard("John Smith", bankAccount);
         System.out.println(loyaltyCard.getCardNumber());
         List<LoyaltyCard> loyaltyCardList = new ArrayList<>();
@@ -77,7 +77,7 @@ public class Utilities {
      */
     public static String currencyPrinter(float value) {
         DecimalFormat df = new DecimalFormat("#.00");
-        return df.format(value / 100);
+        return df.format(value);
     }
 
     /**

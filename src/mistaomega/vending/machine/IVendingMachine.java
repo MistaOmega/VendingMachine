@@ -8,11 +8,11 @@ import mistaomega.vending.items.Item;
  * @author Jack Nash
  */
 public interface IVendingMachine {
-     int selectAndShow(Item item);
+     float selectAndShow(Item item);
 
-     void insertMoney(int money);
+     void insertMoney(float money);
 
-     int refund();
+     float refund();
 
      void reset();
 }

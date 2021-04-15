@@ -4,7 +4,7 @@ public enum Item {
     COKE("Coke", 100, "01B7"), PEPSI("Pepsi", 105, "01A1"), FANTA("Fanta", 101, "01A2"), IRNBRU("Irn-Bru", 215, "01B1");
 
     private final String name;
-    private final int price;
+    private final float price;
     private final String code;
 
     Item(String name, int price, String code) {
@@ -17,7 +17,7 @@ public enum Item {
         return name;
     }
 
-    public int getPrice(){
+    public float getPrice(){
         return price;
     }
 
