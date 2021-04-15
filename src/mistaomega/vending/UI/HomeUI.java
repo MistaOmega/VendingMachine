@@ -185,6 +185,7 @@ public class HomeUI {
                 boolean purchased = vendingMachine.purchaseItem(vendingMachine.getSelectedItem(), vendingMachine.getSelectedItem().getPrice() / 100);
                 if (purchased) {
                     tfInfo.setText("Purchase completed successfully, enjoy!");
+                    tfBalance.setText(Utilities.currencyPrinter(vendingMachine.getBalance()));
                 }
             }
         }
